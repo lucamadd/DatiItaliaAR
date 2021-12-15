@@ -9,6 +9,10 @@ public class MainMenu : MonoBehaviour
     public void LoadMainScene(){
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
+
+    public void LoadCredits(){
+        SceneManager.LoadScene("CreditsScene");
+    }
     
     
 }

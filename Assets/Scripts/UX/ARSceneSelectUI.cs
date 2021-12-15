@@ -6,9 +6,11 @@ using UnityEngine.SceneManagement;
 using UnityEngine.XR.ARFoundation;
 
 namespace UnityEngine.XR.ARFoundation.Samples
+
 {
     public class ARSceneSelectUI : MonoBehaviour
     {
+
         [SerializeField]
         Scrollbar m_HorizontalScrollBar;
         public Scrollbar horizontalScrollBar
@@ -148,12 +150,13 @@ namespace UnityEngine.XR.ARFoundation.Samples
             m_AllMenu.SetActive(false);
             ScrollToStartPosition();
             */
+
             LoadScene("BasicImageTracking");
         }
 
-        public void BasicImageTrackingButtonPressed()
+        public void CreditsButtonPressed()
         {
-            LoadScene("BasicImageTracking");
+            LoadScene("CreditsScene");
         }
 
         public void MultiImagesTrackingButtonPressed()
