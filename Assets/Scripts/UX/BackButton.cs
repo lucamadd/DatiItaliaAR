@@ -19,6 +19,7 @@ namespace UnityEngine.XR.ARFoundation.Samples
             {
                 m_BackButton.SetActive(true);
             }
+            TextAlert.Show("Cerca un piano orizzontale per posizionare corretamente l'indicatore.");
         }
 
         void Update()
@@ -37,5 +38,7 @@ namespace UnityEngine.XR.ARFoundation.Samples
                 LoaderUtility.Deinitialize();
             }
         }
+
+        
     }
 }
