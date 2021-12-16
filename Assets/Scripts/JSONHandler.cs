@@ -68,9 +68,8 @@ public class JSONHandler : MonoBehaviour
         today_info.text =   "Totale casi " + andamentoNazionale.totale_casi.ToString("#,#.#############################") +
                             "\nNuovi " + andamentoNazionale.nuovi_positivi.ToString("#,#.#############################") +
                             "\nDeceduti " + andamentoNazionale.deceduti.ToString("#,#.#############################") +
-
-                            "\n\nNuove vaccinazioni ...." +
-                            "\nPercent. vaccinaz. ..%";
+                            "\nTamponi ..." +
+                            "\n\nRapporto positivi/tamponi ...%";
     }
 }
 

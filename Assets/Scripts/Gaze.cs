@@ -54,14 +54,18 @@ public class Gaze : MonoBehaviour
                     RaycastHit raycastHit;
                     if (Physics.Raycast(raycast, out raycastHit))
                     {
-                        TextAlert.Show("Cliccato su " + raycastHit.transform.gameObject.name);
+                        if (raycastHit.collider.gameObject.name.Equals(go.name)){
+                            TextAlert.Show("Cliccato su " + raycastHit.collider.gameObject.name);
+                        }
+                        
                     }
                 }
 
             }
             else
             {
-                CloseAll();
+            //senza questa chiamata se inquadro il nulla dopo aver inquadrato una regione, questa non si chiude
+               CloseAll();
             }
         }
         else
