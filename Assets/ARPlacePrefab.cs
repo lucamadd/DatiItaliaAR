@@ -37,7 +37,7 @@ public class ARPlacePrefab : MonoBehaviour
         if (Input.touchCount < 1 || (touch = Input.GetTouch(0)).phase != TouchPhase.Began) { return; }
         
         // Perform AR raycast to any kind of trackable
-        if (_raycastManager.Raycast(touch.position, Hits, TrackableType.All))
+        if (_raycastManager.Raycast(touch.position, Hits, TrackableType.AllTypes))
         {
             // Raycast hits are sorted by distance, so the first one will be the closest hit.
             var hitPose = Hits[0].pose;

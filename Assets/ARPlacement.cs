@@ -14,6 +14,9 @@ public class ARPlacement : MonoBehaviour
     private bool placementPoseIsValid = false;
     private GameObject Italy = null;
 
+    [SerializeField]
+    ARPlaneManager m_ARPlaneManager;
+
 
     void Start()
     {
@@ -27,13 +30,15 @@ public class ARPlacement : MonoBehaviour
         {
             Italy = ARPlaceObject();
             Italy.transform.localScale = new Vector3(0.0003f,0.0003f,0.0003f);
+            
         }
         if (Italy != null){
             //controllo una delle componenti, se è meno di 0.3 continuo a aumentare la dimensione
             if (Italy.transform.localScale.x < 0.3f)
                 Italy.transform.localScale = Vector3.Lerp(Italy.transform.localScale, new Vector3(0.3f,0.3f,0.3f), Time.deltaTime * 6);
-            else //altrimenti disabilito la detection di altri planes
-                DisablePlaneDetection(); //TODO CONTROLLARE SE FUNZIONA
+            //else //altrimenti disabilito la detection di altri planes
+                //DisablePlaneDetection(); //TODO CONTROLLARE SE FUNZIONA
+                DisablePlaneDetection();
 
         }
 
@@ -83,9 +88,14 @@ public class ARPlacement : MonoBehaviour
 
     void DisablePlaneDetection(){
         ARPlaneManager m_ARPlaneManager;
-        m_ARPlaneManager = GetComponent<ARPlaneManager>();
-        foreach (var plane in m_ARPlaneManager.trackables)
+        m_ARPlaneManager = FindObjectOfType<ARPlaneManager>();
+        //TextAlert.Show("DEBUG");
+        //TextAlert.Show("CANCELLATI " + m_ARPlaneManager.trackables.count + " PIANI");
+        foreach (var plane in m_ARPlaneManager.trackables){
+            //TextAlert.Show("CANCELLATO PIANO " + plane.name);
             plane.gameObject.SetActive(false);
+        }
+            
     }
 
 }

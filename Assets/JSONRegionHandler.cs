@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -51,44 +52,27 @@ public class JSONRegionHandler : MonoBehaviour
     [SerializeField]
     TextMeshPro InfoVeneto;
 
+    DataGetter dataGetter;
+
     public RootAndamentoRegionale andamentoRegionale = null;
 
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(GetRequestRegionale("https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-regioni-latest.json"));
-    }
-
-    IEnumerator GetRequestRegionale(string uri)
-    {
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
-        {
-            // Request and wait for the desired page.
-            yield return webRequest.SendWebRequest();
-
-            string[] pages = uri.Split('/');
-            int page = pages.Length - 1;
-
-            switch (webRequest.result)
-            {
-                case UnityWebRequest.Result.ConnectionError:
-                case UnityWebRequest.Result.DataProcessingError:
-                    Debug.LogError(pages[page] + ": Error: " + webRequest.error);
-                    break;
-                case UnityWebRequest.Result.ProtocolError:
-                    Debug.LogError(pages[page] + ": HTTP Error: " + webRequest.error);
-                    break;
-                case UnityWebRequest.Result.Success:
-                    string json_string = webRequest.downloadHandler.text;
-                    Debug.Log(pages[page] + ":\nReceived: " + json_string);
-                    andamentoRegionale = JsonUtility.FromJson<RootAndamentoRegionale>("{\"regioni\":" + json_string + "}");
-                    FillRegionInfo(andamentoRegionale.regioni);
-                    break;
-            }
+        dataGetter = FindObjectOfType<DataGetter>();
+        if (dataGetter != null && dataGetter.andamentoRegionale != null){
+            andamentoRegionale = dataGetter.andamentoRegionale;
+            StartCoroutine(FillRegionInfo(andamentoRegionale.regioni));
         }
+        
     }
 
-    private void FillRegionInfo(AndamentoRegionale[] regioni){
+    
+
+    IEnumerator FillRegionInfo(AndamentoRegionale[] regioni)
+    {
+
+        int[] nuovi_deceduti = new int[21];
 
         TextMeshPro[] InfoRegioni = {InfoAbruzzo, InfoBasilicata, InfoCalabria, InfoCampania,
                                      InfoEmiliaRomagna, InfoFriuliVeneziaGiulia, InfoLazio,
@@ -96,19 +80,66 @@ public class JSONRegionHandler : MonoBehaviour
                                      InfoPABolzano, InfoPATrento, InfoPiemonte, InfoPuglia,
                                      InfoSardegna, InfoSicilia, InfoToscana, InfoUmbria,
                                      InfoValleDAosta, InfoVeneto};
-
-        for (int i=0; i<21; i++){
-            InfoRegioni[i].text = regioni[i].denominazione_regione + 
-                           "\n\nTotale " + regioni[i].totale_casi.ToString("#,#.#############################") +
-                           "\nNuovi " + regioni[i].nuovi_positivi.ToString("#,#.#############################") +
-                           "\nDeceduti " + regioni[i].deceduti.ToString("#,#.#############################");
+        int j = 0;
+        for (int i = regioni.Length - 21; i < regioni.Length; i++)
+        {
+            nuovi_deceduti[j] = regioni[i].deceduti - regioni[i - 21].deceduti;
+            //Debug.Log("222 - nuovi deceduti: " + nuovi_deceduti[j].ToString("#,#.#############################") + " - " + regioni[i].denominazione_regione);
+            j++;
         }
-        
+        j = 0;
+        for (int i = regioni.Length - 21; i < regioni.Length; i++)
+        {
+            Transform[] comps = InfoRegioni[j].GetComponentsInParent<Transform>();
+            foreach (Transform trans in comps)
+            {
+                ///Debug.Log("444 - " + trans.name + " - " + regioni[i].denominazione_regione);
+                if (trans.name.Equals(regioni[i].denominazione_regione))
+                {
+                    Renderer RegionRendered = trans.GetComponent<Renderer>();
+                    Color32[] colors = new Color32[6];
+                    colors[0] = new Color32(105, 179, 76, 1);
+                    colors[1] = new Color32(172, 179, 52, 1);
+                    colors[2] = new Color32(250, 183, 51, 1);
+                    colors[3] = new Color32(255, 142, 21, 1);
+                    colors[4] = new Color32(255, 78, 17, 1);
+                    colors[5] = new Color32(255, 13, 13, 1);
+                    UnityEngine.Random.InitState(regioni[i].totale_casi);
+                    int index = UnityEngine.Random.Range(0, 6);
+                    float duration = UnityEngine.Random.Range(0f, 0.05f);
+                    ///Debug.Log("444 - " + trans.name + " - " + "index: " + index + " - " + "duration: " +duration);
+                    yield return new WaitForSeconds(duration);
+                    RegionRendered.material.DOColor(colors[index], duration);
+                }
+
+            }
+
+            if (regioni[i].denominazione_regione.Equals("Friuli Venezia Giulia"))
+            {
+                InfoRegioni[j].text =
+                                           "\n\n\n" + regioni[i].totale_casi.ToString("#,#.#############################") +
+                                           "\n" + regioni[i].nuovi_positivi.ToString("#,#.#############################") +
+                                           "\n+" + nuovi_deceduti[j];
+            }
+            else
+            {
+                InfoRegioni[j].text =
+                           "\n\n" + regioni[i].totale_casi.ToString("#,#.#############################") +
+                           "\n" + regioni[i].nuovi_positivi.ToString("#,#.#############################") +
+                           "\n+" + nuovi_deceduti[j];
+            }
+            j++;
+            //Debug.Log("222 - PASSED - i = " + i + " - j = " + j);
+        }
+
     }
+
+
 }
 
 [Serializable]
-public class AndamentoRegionale{
+public class AndamentoRegionale
+{
     public string data;
     public string denominazione_regione;
     public int terapia_intensiva;
@@ -120,8 +151,8 @@ public class AndamentoRegionale{
 
 }
 
- [Serializable]
- public class RootAndamentoRegionale
- {
-     public AndamentoRegionale[] regioni;
- }
+[Serializable]
+public class RootAndamentoRegionale
+{
+    public AndamentoRegionale[] regioni;
+}

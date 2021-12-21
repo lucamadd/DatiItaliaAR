@@ -495,6 +495,7 @@ MonoBehaviour:
   arObjectToSpawn: {fileID: 628285812220204100, guid: dc303de7b45bb984897db264e2dcb78a,
     type: 3}
   placementIndicator: {fileID: 1050816280}
+  m_ARPlaneManager: {fileID: 0}
 --- !u!4 &413734874
 Transform:
   m_ObjectHideFlags: 0
@@ -942,6 +943,7 @@ GameObject:
   - component: {fileID: 1247506534}
   - component: {fileID: 1247506531}
   - component: {fileID: 1247506535}
+  - component: {fileID: 1247506536}
   m_Layer: 0
   m_Name: AR Camera
   m_TagString: MainCamera
@@ -1059,6 +1061,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 32db21d9d3dd46940ae49368a4fd97ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1247506536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1247506529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5074ecb5a23d0d043b0a1e11ed4871cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1338354114

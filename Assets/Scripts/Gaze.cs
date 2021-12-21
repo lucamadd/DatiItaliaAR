@@ -1,18 +1,15 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.XR.ARFoundation;
 
 public class Gaze : MonoBehaviour
 {
 
     List<InfoBehavior> infos = new List<InfoBehavior>();
 
-    private Vector3 vectorX = new Vector3(0.02f, 0f, 0f);
-    private Vector3 vectorY = new Vector3(0f, 0.02f, 0f);
-    private Vector3 vectorZ = new Vector3(0f, 0f, 0.02f);
-
+    private Vector3 vectorX = new Vector3(0.02f,0f,0f);
+    private Vector3 vectorY = new Vector3(0f,0.02f,0f);
+    private Vector3 vectorZ = new Vector3(0f,0f,0.02f);
 
     // Start is called before the first frame update
     void Start()
@@ -24,29 +21,26 @@ public class Gaze : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         infos = FindObjectsOfType<InfoBehavior>().ToList();
-        if ((Physics.Raycast(transform.position, transform.forward, out RaycastHit hit))
-            /*||
+        if ((Physics.Raycast(transform.position, transform.forward, out RaycastHit hit)) ||
             (Physics.Raycast(transform.position, transform.forward + vectorX, out RaycastHit hitPlusX)) ||
             (Physics.Raycast(transform.position, transform.forward + vectorY, out RaycastHit hitPlusY)) ||
             (Physics.Raycast(transform.position, transform.forward + vectorZ, out RaycastHit hitPlusZ)) ||
             (Physics.Raycast(transform.position, transform.forward - vectorX, out RaycastHit hitMinusX)) ||
             (Physics.Raycast(transform.position, transform.forward - vectorY, out RaycastHit hitMinusY)) ||
-            (Physics.Raycast(transform.position, transform.forward - vectorZ, out RaycastHit hitMinusZ))*/
-            )
+            (Physics.Raycast(transform.position, transform.forward - vectorZ, out RaycastHit hitMinusZ)))
         {
-            Debug.DrawRay(transform.position, transform.forward + vectorX, Color.green);
-            Debug.DrawRay(transform.position, transform.forward + vectorY, Color.green);
-            Debug.DrawRay(transform.position, transform.forward + vectorZ, Color.green);
-            Debug.DrawRay(transform.position, transform.forward - vectorX, Color.green);
-            Debug.DrawRay(transform.position, transform.forward - vectorY, Color.green);
-            Debug.DrawRay(transform.position, transform.forward - vectorZ, Color.green);
+            Debug.DrawRay(transform.position, transform.forward + vectorX, Color.green); 
+            Debug.DrawRay(transform.position, transform.forward + vectorY, Color.green); 
+            Debug.DrawRay(transform.position, transform.forward + vectorZ, Color.green); 
+            Debug.DrawRay(transform.position, transform.forward - vectorX, Color.green); 
+            Debug.DrawRay(transform.position, transform.forward - vectorY, Color.green); 
+            Debug.DrawRay(transform.position, transform.forward - vectorZ, Color.green); 
 
 
             GameObject go = hit.collider.gameObject;
             if (go.CompareTag("hasInfo"))
-            {
+            {   
                 OpenInfo(go.GetComponent<InfoBehavior>());
                 if ((Input.touchCount > 0) && (Input.GetTouch(0).phase == TouchPhase.Began))
                 {
@@ -60,21 +54,13 @@ public class Gaze : MonoBehaviour
                         
                     }
                 }
-
-            }
-            else
-            {
-            //senza questa chiamata se inquadro il nulla dopo aver inquadrato una regione, questa non si chiude
-               CloseAll();
             }
         }
         else
         {
             CloseAll();
         }
-
     }
-
 
     void OpenInfo(InfoBehavior desiredInfo)
     {
@@ -99,6 +85,4 @@ public class Gaze : MonoBehaviour
             info.CloseInfo();
         }
     }
-
-
 }

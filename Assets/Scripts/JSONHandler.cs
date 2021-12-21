@@ -18,75 +18,42 @@ public class JSONHandler : MonoBehaviour
     [SerializeField]
     TextMeshPro today_info;
 
+    DataGetter dataGetter;
+
     public RootAndamentoNazionale andamentoNazionale = null;
 
     
 
     void Start()
     {
-        // A correct website page.
-        StartCoroutine(GetRequestNazionale("https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-andamento-nazionale-latest.json"));
+        dataGetter = FindObjectOfType<DataGetter>();
+        if (dataGetter != null && dataGetter.andamentoNazionale != null){
+            andamentoNazionale = dataGetter.andamentoNazionale;
+            StartCoroutine(FillMainInfo(andamentoNazionale.info[andamentoNazionale.info.Length-2], andamentoNazionale.info[andamentoNazionale.info.Length-1]));
+        }
+        
         
         // A non-existing page.
         //StartCoroutine(GetRequest("https://error.html"));
     }
 
-    IEnumerator GetRequestNazionale(string uri)
-    {
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
-        {
-            // Request and wait for the desired page.
-            yield return webRequest.SendWebRequest();
-
-            string[] pages = uri.Split('/');
-            int page = pages.Length - 1;
-
-            switch (webRequest.result)
-            {
-                case UnityWebRequest.Result.ConnectionError:
-                case UnityWebRequest.Result.DataProcessingError:
-                    Debug.LogError(pages[page] + ": Error: " + webRequest.error);
-                    break;
-                case UnityWebRequest.Result.ProtocolError:
-                    Debug.LogError(pages[page] + ": HTTP Error: " + webRequest.error);
-                    break;
-                case UnityWebRequest.Result.Success:
-                    string json_string = webRequest.downloadHandler.text;
-                    Debug.Log(pages[page] + ":\nReceived: " + json_string);
-                    andamentoNazionale = JsonUtility.FromJson<RootAndamentoNazionale>("{\"info\":" + json_string + "}");
-                    Debug.Log("ANDAMENTO NAZIONALE IS " + andamentoNazionale.info[0].data);
-                    FillMainInfo(andamentoNazionale.info[0]);
-                    break;
-            }
-        }
-    }
-
     
 
-    private void FillMainInfo(AndamentoNazionale andamentoNazionale){
-        today_date.text = DateTools.GetItalianDate(andamentoNazionale.data.Substring(0,10));
-        today_info.text =   "Totale casi " + andamentoNazionale.totale_casi.ToString("#,#.#############################") +
-                            "\nNuovi " + andamentoNazionale.nuovi_positivi.ToString("#,#.#############################") +
-                            "\nDeceduti " + andamentoNazionale.deceduti.ToString("#,#.#############################") +
-                            "\nTamponi ..." +
-                            "\n\nRapporto positivi/tamponi ...%";
+    IEnumerator FillMainInfo(AndamentoNazionale andamentoNazionaleOld, AndamentoNazionale andamentoNazionaleNew){
+
+        int nuovi_deceduti = andamentoNazionaleNew.deceduti - andamentoNazionaleOld.deceduti;
+        int nuovi_tamponi = andamentoNazionaleNew.tamponi - andamentoNazionaleOld.tamponi;
+        float rapporto_positivi_tamponi = ((float)andamentoNazionaleNew.nuovi_positivi / (float)nuovi_tamponi)*100;
+        Debug.Log("222 - rapporto positivi tamponi: " + rapporto_positivi_tamponi);
+
+        today_date.text = DateTools.GetItalianDate(andamentoNazionaleNew.data.Substring(0,10));
+        today_info.text =   andamentoNazionaleNew.totale_casi.ToString("#,#.#############################") +
+                            "\n+" + andamentoNazionaleNew.nuovi_positivi.ToString("#,#.#############################") +
+                            "\n+" + nuovi_deceduti.ToString("#,#.#############################") +
+                            "\n+" + nuovi_tamponi.ToString("#,#.#############################") +
+                            "\n\n" + Math.Round(rapporto_positivi_tamponi, 2) + "%";
+        yield return null;
     }
-}
-
-[Serializable]
-public class AndamentoNazionale{
-    public string data;
-    public int terapia_intensiva;
-    public int totale_positivi;
-    public int nuovi_positivi;
-    public int deceduti;
-    public int totale_casi;
-    public int casi_testati;
 
 }
 
- [Serializable]
- public class RootAndamentoNazionale
- {
-     public AndamentoNazionale[] info;
- }
