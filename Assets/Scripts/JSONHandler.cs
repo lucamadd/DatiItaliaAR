@@ -4,10 +4,6 @@ using System.Collections;
 using System;
 using TMPro;
 
-// UnityWebRequest.Get example
-
-// Access a website and use UnityWebRequest.Get to download a page.
-// Also try to download a non-existing page. Display the error.
 
 public class JSONHandler : MonoBehaviour
 {
@@ -33,8 +29,6 @@ public class JSONHandler : MonoBehaviour
         }
         
         
-        // A non-existing page.
-        //StartCoroutine(GetRequest("https://error.html"));
     }
 
     
@@ -44,7 +38,6 @@ public class JSONHandler : MonoBehaviour
         int nuovi_deceduti = andamentoNazionaleNew.deceduti - andamentoNazionaleOld.deceduti;
         int nuovi_tamponi = andamentoNazionaleNew.tamponi - andamentoNazionaleOld.tamponi;
         float rapporto_positivi_tamponi = ((float)andamentoNazionaleNew.nuovi_positivi / (float)nuovi_tamponi)*100;
-        Debug.Log("222 - rapporto positivi tamponi: " + rapporto_positivi_tamponi);
 
         today_date.text = DateTools.GetItalianDate(andamentoNazionaleNew.data.Substring(0,10));
         today_info.text =   andamentoNazionaleNew.totale_casi.ToString("#,#.#############################") +

@@ -21,9 +21,12 @@
  */
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public static class TextAlert
 {
+
+    
     /// <summary>
     /// Show the passed string in a native alert dialog
     /// </summary>
@@ -40,6 +43,22 @@ public static class TextAlert
             }
         }
 #endif
+        Debug.Log("TextAlert.Show("+msg+")");
+    }
+    public static void ShowAndExit(string msg)
+    {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        using(var playerClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+        {
+            AndroidJavaObject activity = playerClass.GetStatic<AndroidJavaObject>("currentActivity");
+            using(var pluginClass = new AndroidJavaClass("com.onebyonedesign.unityplugins.TextAlert"))
+            {
+                pluginClass.CallStatic<AndroidJavaObject>("getInstance")
+                    .Call("show", new object[] { activity, msg });
+            }
+        }
+#endif
+        SceneManager.LoadScene("Menu", LoadSceneMode.Single);
         Debug.Log("TextAlert.Show("+msg+")");
     }
 }

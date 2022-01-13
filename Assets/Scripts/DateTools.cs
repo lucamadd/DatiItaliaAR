@@ -11,9 +11,7 @@ public class DateTools : MonoBehaviour
         if (ISODate.IndexOf("-") == -1){
             italianDate = "Errore di rete";
         }
-        Debug.Log(ISODate);
         string anno = ISODate.Substring(0,4);
-        Debug.Log("ANNO " + anno);
         string mese = ISODate.Substring(5,2);  //il secondo parametro è la lunghezza, non l'indice finale
         string giorno = ISODate.Substring(8,2); //ho perso due ore per questo problema
 
